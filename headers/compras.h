@@ -1,17 +1,6 @@
-typedef struct {
-  int id;
-  char nombre_producto[124];
-  float precio_unitario;
-} STRUCTPRODUCTOS;
-
-typedef struct {
-  STRUCTPRODUCTOS producto;
-  int cantidad;
-} STRUCTPRODUCTOVENTA;
-
-#define MAX_LEN_CARRO_PRODUCTOS 10
-#define LEN_PRODUCTOS 30
-#define MAX_CANTIDAD_PRODUCTOS 5
+#define MAX_LEN_CARRO_PRODUCTOS 10 // Longitud maxima del carrito de compras
+#define LEN_PRODUCTOS 30 // Longitud de la lista de productos
+#define MAX_CANTIDAD_PRODUCTOS 5 // Cantidad maxima de productos de un mismo tipo que se pueden comprar
 
 void start_venta();
 void set_productos();

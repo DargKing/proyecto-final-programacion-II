@@ -1,11 +1,23 @@
 #include "../headers/main_header.h"
 
-STRUCTPRODUCTOS lista_de_productos[30];
-STRUCTPRODUCTOVENTA carrito_de_compras[MAX_LEN_CARRO_PRODUCTOS];
+STRUCTPRODUCTOS lista_de_productos[LEN_PRODUCTOS]; // Declara el array que contendra la lista de productos
+STRUCTPRODUCTOVENTA carrito_de_compras[MAX_LEN_CARRO_PRODUCTOS]; // Declara el array que contendra el carrito de compras
 int longitud_de_carrito = 0;
 
+
+/*
+************************************************
+*          buscar_producto_en_carro            *
+************************************************
+* Busca en la variable carrito_de_compras el   *
+* id que se paso en los parametros, si existe  *
+* en el array entonces devuelve su posicion,   *
+* sino devuelve -1                             *
+************************************************
+*/
 int buscar_producto_en_carro(int id)
 {
+  // Aumenta un numero hasta que encuentra el dato que busca
   for (int i = 0; i < MAX_LEN_CARRO_PRODUCTOS; i++)
   {
     if (id == carrito_de_compras[i].producto.id)
@@ -13,9 +25,20 @@ int buscar_producto_en_carro(int id)
       return i;
     }
   }
+
+  // Devuelve -1 si no encuentra conincidencias
   return -1;
 }
 
+
+/*
+***********************************************
+*                set_productos                *
+***********************************************
+* Introduce en la variable lista de productos *
+* 30 productos diferentes                     *
+***********************************************
+*/
 void set_productos()
 {
   // 1
@@ -169,6 +192,20 @@ void set_productos()
   lista_de_productos[29].precio_unitario = 40;
 }
 
+
+/*
+*****************************************************
+*                    start_venta                    *
+*****************************************************
+* Muestra el menu de ventas, este consta de 4       *
+* opciones:                                         *
+* 1- Agregar producto al carrito                    *
+* 2- Eliminar ultimo producto del carrito           *
+* 3- Mostrar carrito                                *
+* 4- Cancelar proceso                               *
+* 
+* 
+*/
 void start_venta()
 {
   STRUCTQUESTION menu_compras[4];
@@ -177,11 +214,14 @@ void start_venta()
   strcpy(menu_compras[2].texto, "3- Mostrar carrito");
   strcpy(menu_compras[3].texto, "4- Cancelar proceso");
 
-  while (1)
+  while (1) // No se detiene hasta que termine el proceso
   {
+    // Pide elegir una accion al usuario
     int menu_compras_opcion = select_menu("Seleccione la accion a realizar", menu_compras, sizeof(menu_compras) / sizeof(STRUCTQUESTION));
-    if (menu_compras_opcion == 0)
+    
+    if (menu_compras_opcion == 0) // 1- Agregar producto al carrito
     {
+      // Si el carrito esta lleno entonces lanza error y vuelve al menu
       if (longitud_de_carrito == MAX_LEN_CARRO_PRODUCTOS)
       {
         system("cls");
@@ -189,23 +229,27 @@ void start_venta()
         getchar();
         continue;
       }
+
+      // Si no esta lleno entonces te pregunta por el producto que agregaras
       int index_producto = select_product("Elige tu producto", lista_de_productos, LEN_PRODUCTOS);
-      if (index_producto == -1)
+      if (index_producto == -1) // Si presiona ESC vuelve al menu
       {
         continue;
       }
 
+      // Pregunta por la cantidad de articulos que se compraran, el maximo de articulos en igual a MAX_CANTIDAD_PRODUCTOS
       int cantidad = select_num("Inserte la cantidad de articulos a comprar (Use las flechas del teclado para aumentar o disminuir, MAXIMO 5 articulos)",
                                 1, MAX_CANTIDAD_PRODUCTOS, 1);
 
-      if (cantidad == -1)
+      if (cantidad == -1) // Si presiona ESC vuelve al menu
       {
         continue;
       }
 
+      // Busca si existe el producto ya en el carrito
       int existe = buscar_producto_en_carro(lista_de_productos[index_producto].id);
 
-      if (existe == -1)
+      if (existe == -1) // Si no existe entonces lo agrega al carrito
       {
         carrito_de_compras[longitud_de_carrito].producto = lista_de_productos[index_producto];
         carrito_de_compras[longitud_de_carrito].cantidad = cantidad;
@@ -214,11 +258,12 @@ void start_venta()
         continue;
       }
 
-      if (carrito_de_compras[existe].cantidad + cantidad <= 5)
+      if (carrito_de_compras[existe].cantidad + cantidad <= 5)  // Si existe pero la suma de la cantidad que se quiere agregar con la actual 
+                                                                //es menor igual a 5 entonces se agrega esa cantidad a la actual
       {
         carrito_de_compras[existe].cantidad += cantidad;
       }
-      else
+      else // Si no suelta error y vuelve al menu
       {
         system("cls");
         puts("Este articulo no se puede agregar por que supera la cantidad permitida");
@@ -226,15 +271,15 @@ void start_venta()
         continue;
       }
     }
-    else if (menu_compras_opcion == 1)
+    else if (menu_compras_opcion == 1) // 2- Eliminar ultimo producto del carrito 
     {
-      if (longitud_de_carrito <= 0)
+      if (longitud_de_carrito <= 0) /* Si la longitud del carrito es menor igual a 0 entonces mostrara un mensaje de error y volvera al menu */
       {
         system("cls");
         puts("Esta accion no se puede realizar a causa de que el carrito de compras esta vacio");
         getchar();
       }
-      else
+      else // si no, se eliminara el ultimo producto agregado
       {
         system("cls");
         printf("\nSe ha eliminado con exito el producto %s del carrito", carrito_de_compras[longitud_de_carrito].producto.nombre_producto);
@@ -242,21 +287,22 @@ void start_venta()
         getchar();
       }
     }
-    else if (menu_compras_opcion == 2)
+    else if (menu_compras_opcion == 2) // 3- Mostrar carrito
     {
-      if (longitud_de_carrito == 0)
+      if (longitud_de_carrito == 0) // Si la longitud_de_carrito es 0 entonces muestra un mensaje de error y vuelve al menu
       {
         system("cls");
         puts("El carrito esta vacio, llenelo");
         getchar();
       }
-      else
+      else // Si no, muestra lo que hay dentro del carrito
       {
         mostrar_carrito(carrito_de_compras, longitud_de_carrito);
       }
     }
-    else if (menu_compras_opcion == 3)
+    else if (menu_compras_opcion == 3) // 4- Cancelar proceso
     {
+      // Te da 2 opciones a elegir, si o no, si respondes si o presionas ESC vuelve al menu principal
       STRUCTQUESTION pregunta_antes_de_salir[2];
       strcpy(pregunta_antes_de_salir[0].texto, "Si");
       strcpy(pregunta_antes_de_salir[1].texto, "No");

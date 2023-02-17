@@ -1,3 +1,6 @@
+// Este aarchivo es un header que enlaza todos los headers necesarios para el proyecto
+
+
 #include <stdio.h>
 #include <string.h>
 #include <conio.h>
