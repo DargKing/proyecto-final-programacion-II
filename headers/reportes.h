@@ -1,1 +1,1 @@
-void start_menu_reportes();
+void start_menu_reportes(int cantidad_de_clientes, int cantidad_de_compras, STRUCTPRODUCTOVENTA *producto_mas_vendido);
